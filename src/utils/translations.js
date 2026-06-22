@@ -115,7 +115,7 @@ export const translations = {
     },
     footer: {
       slogan: "إختاروا من يدافع عنكم فهو أصلا محام.",
-      rights: "جميع الحقوق محفوظة © 2026. الحملة الانتخابية للمرشح عماد رزايقية.",
+      rights: "جميع الحقوق محفوظة © 2026. HAFIDI.DeV.",
       quickLinks: "روابط سريعة",
       socialMedia: "تواصل معنا"
     }

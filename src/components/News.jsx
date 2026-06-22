@@ -1,10 +1,38 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, ArrowRight, ArrowLeft, X, Newspaper } from 'lucide-react';
+import { Calendar, ArrowRight, ArrowLeft, X, Newspaper, Loader2 } from 'lucide-react';
+import { useArticles } from '../hooks/useArticles';
+
+// Format a UTC date string into a human-readable date
+function formatDate(dateStr, lang) {
+  if (!dateStr) return '';
+  try {
+    return new Date(dateStr).toLocaleDateString(
+      lang === 'ar' ? 'ar-DZ' : 'en-GB',
+      { year: 'numeric', month: 'long', day: 'numeric' }
+    );
+  } catch {
+    return dateStr;
+  }
+}
 
 export default function News({ lang, text }) {
   const [activeNews, setActiveNews] = useState(null);
   const isRtl = lang === 'ar';
+  const { articles, loading, error } = useArticles();
+
+  // Map DB articles to display shape
+  const displayItems = articles.map((a) => ({
+    id: a.id,
+    date: formatDate(a.published_at, lang),
+    title: lang === 'ar' ? a.title_ar : a.title_en,
+    summary: lang === 'ar' ? a.summary_ar : a.summary_en,
+    fullText: lang === 'ar' ? a.body_ar : a.body_en,
+    cover_url: a.cover_url,
+  }));
+
+  // Fallback to static translations if DB returned nothing
+  const items = displayItems.length > 0 ? displayItems : (text.news.list || []);
 
   return (
     <section id="news" className="py-24 bg-white relative overflow-hidden">
@@ -23,41 +51,68 @@ export default function News({ lang, text }) {
           </p>
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="h-10 w-10 text-algerian-green animate-spin" />
+          </div>
+        )}
+
+        {/* Error State */}
+        {!loading && error && items.length === 0 && (
+          <div className="text-center py-12 text-slate-400">
+            <p>{lang === 'ar' ? 'تعذر تحميل الأخبار.' : 'Could not load news.'}</p>
+          </div>
+        )}
+
         {/* News Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {text.news.list.map((item) => (
-            <motion.article
-              key={item.id}
-              whileHover={{ y: -6 }}
-              className="bg-slate-50 border border-slate-100 rounded-3xl overflow-hidden shadow-md flex flex-col justify-between hover:shadow-lg transition-all group"
-            >
-              <div className="p-6 sm:p-8">
-                {/* Date Tag */}
-                <div className="flex items-center gap-2 text-slate-400 text-xs font-semibold mb-4">
-                  <Calendar className="h-4 w-4 text-algerian-gold" />
-                  <span>{item.date}</span>
+        {!loading && items.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {items.map((item) => (
+              <motion.article
+                key={item.id}
+                whileHover={{ y: -6 }}
+                className="bg-slate-50 border border-slate-100 rounded-3xl overflow-hidden shadow-md flex flex-col justify-between hover:shadow-lg transition-all group"
+              >
+                {/* Cover image if present */}
+                {item.cover_url && (
+                  <div className="w-full h-44 overflow-hidden">
+                    <img
+                      src={item.cover_url}
+                      alt={item.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                )}
+
+                <div className="p-6 sm:p-8">
+                  {/* Date Tag */}
+                  <div className="flex items-center gap-2 text-slate-400 text-xs font-semibold mb-4">
+                    <Calendar className="h-4 w-4 text-algerian-gold" />
+                    <span>{item.date}</span>
+                  </div>
+
+                  <h3 className="text-lg font-bold text-slate-800 mb-3 group-hover:text-algerian-green transition-colors line-clamp-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">
+                    {item.summary}
+                  </p>
                 </div>
 
-                <h3 className="text-lg font-bold text-slate-800 mb-3 group-hover:text-algerian-green transition-colors line-clamp-2">
-                  {item.title}
-                </h3>
-                <p className="text-slate-500 text-sm leading-relaxed line-clamp-3">
-                  {item.summary}
-                </p>
-              </div>
-
-              <div className="px-6 sm:px-8 pb-6 sm:pb-8 pt-0">
-                <button
-                  onClick={() => setActiveNews(item)}
-                  className="w-full flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-bold text-xs py-3 px-4 rounded-xl hover:bg-algerian-green hover:text-white hover:border-algerian-green transition-all"
-                >
-                  <span>{text.news.readMore}</span>
-                  {isRtl ? <ArrowLeft className="h-3.5 w-3.5" /> : <ArrowRight className="h-3.5 w-3.5" />}
-                </button>
-              </div>
-            </motion.article>
-          ))}
-        </div>
+                <div className="px-6 sm:px-8 pb-6 sm:pb-8 pt-0">
+                  <button
+                    onClick={() => setActiveNews(item)}
+                    className="w-full flex items-center justify-center gap-2 bg-white border border-slate-200 text-slate-700 font-bold text-xs py-3 px-4 rounded-xl hover:bg-algerian-green hover:text-white hover:border-algerian-green transition-all"
+                  >
+                    <span>{text.news.readMore}</span>
+                    {isRtl ? <ArrowLeft className="h-3.5 w-3.5" /> : <ArrowRight className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
+              </motion.article>
+            ))}
+          </div>
+        )}
 
         {/* Modal Overlay */}
         <AnimatePresence>
@@ -84,6 +139,15 @@ export default function News({ lang, text }) {
                   <div className="bg-algerian-red flex-1" />
                 </div>
 
+                {/* Cover image in modal */}
+                {activeNews.cover_url && (
+                  <img
+                    src={activeNews.cover_url}
+                    alt={activeNews.title}
+                    className="w-full h-52 object-cover"
+                  />
+                )}
+
                 <div className="p-8">
                   {/* Close button */}
                   <button
@@ -107,7 +171,7 @@ export default function News({ lang, text }) {
                     {activeNews.title}
                   </h4>
 
-                  <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed text-sm bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6">
+                  <div className="prose prose-slate max-w-none text-slate-600 leading-relaxed text-sm bg-slate-50 p-6 rounded-2xl border border-slate-100 mb-6 whitespace-pre-wrap">
                     {activeNews.fullText}
                   </div>
 

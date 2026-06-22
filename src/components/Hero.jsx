@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Award, Vote, FileText, Landmark, Users } from 'lucide-react';
 import { getTotalVotes } from '../utils/supabasePlaceholder';
 
-export default function Hero({ lang, text, setShowVoting, refreshTrigger }) {
+export default function Hero({ lang, text, setShowVoting, refreshTrigger, settings }) {
   const isRtl = lang === 'ar';
   const [voteCount, setVoteCount] = useState(0);
   const [loadingVotes, setLoadingVotes] = useState(true);
@@ -153,13 +153,13 @@ export default function Hero({ lang, text, setShowVoting, refreshTrigger }) {
                 <div className="w-full flex flex-col gap-3">
                   <div className="flex justify-between items-center w-full">
                     <span className="text-sm font-bold text-slate-500 font-tajawal">
-                      {lang === 'ar' ? 'الهدف: 2500 صوت' : 'Goal: 2500 Votes'}
+                      {lang === 'ar' ? `الهدف: ${(settings?.vote_goal ?? 2500).toLocaleString()} صوت` : `Goal: ${(settings?.vote_goal ?? 2500).toLocaleString()} Votes`}
                     </span>
                     <span className="text-lg font-bold text-algerian-green font-tajawal">
                       {loadingVotes ? (
                         '0%'
                       ) : (
-                        `${Math.min(100, Math.round((voteCount / 2500) * 100))}%`
+                        `${Math.min(100, Math.round((voteCount / (settings?.vote_goal ?? 2500)) * 100))}%`
                       )}
                     </span>
                   </div>
@@ -169,7 +169,7 @@ export default function Hero({ lang, text, setShowVoting, refreshTrigger }) {
                     ) : (
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${Math.min(100, (voteCount / 2500) * 100)}%` }}
+                        animate={{ width: `${Math.min(100, (voteCount / (settings?.vote_goal ?? 2500)) * 100)}%` }}
                         transition={{ duration: 1, ease: 'easeOut' }}
                         className="h-full bg-gradient-to-r from-algerian-green via-algerian-gold to-algerian-red rounded-full shadow-inner"
                       />
@@ -276,7 +276,7 @@ export default function Hero({ lang, text, setShowVoting, refreshTrigger }) {
               </div>
 
               <img
-                src="/candidate_portrait.png"
+                src={settings?.hero_portrait_url || '/candidate_portrait.png'}
                 alt={text.hero.candidateName}
                 className="w-full h-auto object-cover block select-none"
                 draggable={false}

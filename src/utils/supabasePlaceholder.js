@@ -20,6 +20,9 @@ export async function submitVote(voteData) {
           list_number: voteData.listSelected || 102,
           candidate_number: voteData.candidateNumber || 2,
           candidate_name: 'Imad Rezayguia',
+          wilaya_code: voteData.wilayaCode ?? 40,
+          wilaya_name: voteData.wilayaName ?? 'خنشلة',
+          municipality_name: voteData.municipalityName ?? null,
           voted_at: new Date().toISOString()
         }
       ])
@@ -63,31 +66,27 @@ export async function getTotalVotes() {
 }
 
 /**
- * Simulates subscribing an email to campaign newsletter updates
+ * Subscribes an email to campaign newsletter updates
  * @param {string} email - Subscriber email
  * @returns {Promise<{success: boolean, message: string}>}
  */
 export async function subscribeNewsletter(email) {
-  console.log('Registering email subscriber:', email);
-
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  /* Real Supabase implementation:
   try {
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from('subscribers')
       .insert([{ email, subscribed_at: new Date().toISOString() }]);
-      
-    if (error) throw error;
-    return { success: true, data };
+
+    if (error) {
+      // Handle duplicate email gracefully
+      if (error.code === '23505') {
+        return { success: true, message: 'Already subscribed!' };
+      }
+      throw error;
+    }
+    return { success: true, message: 'Subscribed successfully!' };
   } catch (error) {
     console.error('Error subscribing to newsletter:', error);
     return { success: false, error: error.message };
   }
-  */
-
-  return {
-    success: true,
-    message: 'Subscription logged in placeholder database.',
-  };
 }
+

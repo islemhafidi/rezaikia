@@ -3,8 +3,98 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Info, CheckCircle, HelpCircle, Lock, X } from 'lucide-react';
 import { submitVote } from '../utils/supabasePlaceholder';
 
+const ALGERIA_WILAYAS = [
+  { code: 1, nameAr: 'أدرار', nameEn: 'Adrar' },
+  { code: 2, nameAr: 'الشلف', nameEn: 'Chlef' },
+  { code: 3, nameAr: 'الأغواط', nameEn: 'Laghouat' },
+  { code: 4, nameAr: 'أم البواقي', nameEn: 'Oum El Bouaghi' },
+  { code: 5, nameAr: 'باتنة', nameEn: 'Batna' },
+  { code: 6, nameAr: 'بجاية', nameEn: 'Béjaïa' },
+  { code: 7, nameAr: 'بسكرة', nameEn: 'Biskra' },
+  { code: 8, nameAr: 'بشار', nameEn: 'Béchar' },
+  { code: 9, nameAr: 'البليدة', nameEn: 'Blida' },
+  { code: 10, nameAr: 'البويرة', nameEn: 'Bouira' },
+  { code: 11, nameAr: 'تمنراست', nameEn: 'Tamanrasset' },
+  { code: 12, nameAr: 'تبسة', nameEn: 'Tébessa' },
+  { code: 13, nameAr: 'تلمسان', nameEn: 'Tlemcen' },
+  { code: 14, nameAr: 'تيارت', nameEn: 'Tiaret' },
+  { code: 15, nameAr: 'تيزي وزو', nameEn: 'Tizi Ouzou' },
+  { code: 16, nameAr: 'الجزائر', nameEn: 'Algiers' },
+  { code: 17, nameAr: 'الجلفة', nameEn: 'Djelfa' },
+  { code: 18, nameAr: 'جيجل', nameEn: 'Jijel' },
+  { code: 19, nameAr: 'سطيف', nameEn: 'Sétif' },
+  { code: 20, nameAr: 'سعيدة', nameEn: 'Saïda' },
+  { code: 21, nameAr: 'سكيكدة', nameEn: 'Skikda' },
+  { code: 22, nameAr: 'سيدي بلعباس', nameEn: 'Sidi Bel Abbès' },
+  { code: 23, nameAr: 'عنابة', nameEn: 'Annaba' },
+  { code: 24, nameAr: 'قالمة', nameEn: 'Guelma' },
+  { code: 25, nameAr: 'قسنطينة', nameEn: 'Constantine' },
+  { code: 26, nameAr: 'المدية', nameEn: 'Médéa' },
+  { code: 27, nameAr: 'مستغانم', nameEn: 'Mostaganem' },
+  { code: 28, nameAr: 'المسيلة', nameEn: 'M\'Sila' },
+  { code: 29, nameAr: 'معسكر', nameEn: 'Mascara' },
+  { code: 30, nameAr: 'ورقلة', nameEn: 'Ouargla' },
+  { code: 31, nameAr: 'وهران', nameEn: 'Oran' },
+  { code: 32, nameAr: 'البيض', nameEn: 'El Bayadh' },
+  { code: 33, nameAr: 'إليزي', nameEn: 'Illizi' },
+  { code: 34, nameAr: 'برج بوعريريج', nameEn: 'Bordj Bou Arréridj' },
+  { code: 35, nameAr: 'بومرداس', nameEn: 'Boumerdès' },
+  { code: 36, nameAr: 'الطارف', nameEn: 'El Tarf' },
+  { code: 37, nameAr: 'تندوف', nameEn: 'Tindouf' },
+  { code: 38, nameAr: 'تيسمسيلت', nameEn: 'Tissemsilt' },
+  { code: 39, nameAr: 'الوادي', nameEn: 'El Oued' },
+  { code: 40, nameAr: 'خنشلة', nameEn: 'Khenchela' },
+  { code: 41, nameAr: 'سوق أهراس', nameEn: 'Souk Ahras' },
+  { code: 42, nameAr: 'تيبازة', nameEn: 'Tipaza' },
+  { code: 43, nameAr: 'ميلة', nameEn: 'Mila' },
+  { code: 44, nameAr: 'عين الدفلى', nameEn: 'Aïn Defla' },
+  { code: 45, nameAr: 'النعامة', nameEn: 'Naâma' },
+  { code: 46, nameAr: 'عين تموشنت', nameEn: 'Aïn Témouchent' },
+  { code: 47, nameAr: 'غرداية', nameEn: 'Ghardaïa' },
+  { code: 48, nameAr: 'غليزان', nameEn: 'Relizane' },
+  { code: 49, nameAr: 'تيميمون', nameEn: 'Timimoun' },
+  { code: 50, nameAr: 'برج باجي مختار', nameEn: 'Bordj Badji Mokhtar' },
+  { code: 51, nameAr: 'أولاد جلال', nameEn: 'Ouled Djellal' },
+  { code: 52, nameAr: 'بني عباس', nameEn: 'Béni Abbès' },
+  { code: 53, nameAr: 'عين صالح', nameEn: 'In Salah' },
+  { code: 54, nameAr: 'عين قزام', nameEn: 'In Guezzam' },
+  { code: 55, nameAr: 'تقرت', nameEn: 'Touggourt' },
+  { code: 56, nameAr: 'جانت', nameEn: 'Djanet' },
+  { code: 57, nameAr: 'المغير', nameEn: 'El M\'Ghair' },
+  { code: 58, nameAr: 'المنيعة', nameEn: 'El Meniaa' }
+];
+
+const KHENCHELA_MUNICIPALITIES = [
+  { nameAr: 'خنشلة', nameEn: 'Khenchela' },
+  { nameAr: 'الحامة', nameEn: 'El Hamma' },
+  { nameAr: 'قايس', nameEn: 'Kais' },
+  { nameAr: 'بغاي', nameEn: 'Baghai' },
+  { nameAr: 'انسيغة', nameEn: 'Ensigha' },
+  { nameAr: 'تامزة', nameEn: 'Tamza' },
+  { nameAr: 'عين الطويلة', nameEn: 'Ain Touila' },
+  { nameAr: 'متوسة', nameEn: 'Mtoussa' },
+  { nameAr: 'تاوزيانت', nameEn: 'Taouzient' },
+  { nameAr: 'بوحمامة', nameEn: 'Bouhmama' },
+  { nameAr: 'يابوس', nameEn: 'Yabous' },
+  { nameAr: 'الرميلة', nameEn: 'Remila' },
+  { nameAr: 'شيلية', nameEn: 'Chelia' },
+  { nameAr: 'أولاد رشاش', nameEn: 'Ouled Rechache' },
+  { nameAr: 'المحمل', nameEn: 'El Mahmal' },
+  { nameAr: 'بابار', nameEn: 'Babar' },
+  { nameAr: 'ششار', nameEn: 'Chechar' },
+  { nameAr: 'خيران', nameEn: 'Khirane' },
+  { nameAr: 'جلال', nameEn: 'Djellal' },
+  { nameAr: 'الولجة', nameEn: 'El Ouldja' },
+  { nameAr: 'مسارة', nameEn: 'M\'Sara' }
+].sort((a, b) => a.nameAr.localeCompare(b.nameAr, 'ar'));
+
 export default function VotingSimulator({ lang, text, onClose, onVoteSuccess }) {
-  const [formData, setFormData] = useState({ name: '', idNumber: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    idNumber: '',
+    wilayaCode: '40', // Default Khenchela
+    municipalityName: 'خنشلة' // Default capital municipality
+  });
   const [listSelected, setListSelected] = useState(false);
   const [candidateSelected, setCandidateSelected] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -13,8 +103,15 @@ export default function VotingSimulator({ lang, text, onClose, onVoteSuccess }) 
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    // Allow alphanumeric characters and spaces
-    setFormData({ ...formData, [name]: value });
+    if (name === 'wilayaCode') {
+      setFormData({
+        ...formData,
+        wilayaCode: value,
+        municipalityName: value === '40' ? 'خنشلة' : ''
+      });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -27,6 +124,11 @@ export default function VotingSimulator({ lang, text, onClose, onVoteSuccess }) 
       return;
     }
 
+    if (formData.wilayaCode === '40' && !formData.municipalityName) {
+      setErrorMessage(lang === 'ar' ? 'الرجاء اختيار البلدية في خنشلة' : 'Please select a municipality in Khenchela');
+      return;
+    }
+
     if (!listSelected || !candidateSelected) {
       setErrorMessage(text.voting.errorSelect);
       return;
@@ -35,11 +137,15 @@ export default function VotingSimulator({ lang, text, onClose, onVoteSuccess }) 
     setIsSubmitting(true);
 
     try {
+      const selectedWilaya = ALGERIA_WILAYAS.find(w => w.code === Number(formData.wilayaCode));
       const payload = {
         name: formData.name,
         idNumber: formData.idNumber,
         listSelected: 102,
-        candidateNumber: 2
+        candidateNumber: 2,
+        wilayaCode: Number(formData.wilayaCode),
+        wilayaName: selectedWilaya ? selectedWilaya.nameAr : 'خنشلة',
+        municipalityName: formData.wilayaCode === '40' ? formData.municipalityName : null
       };
       
       const response = await submitVote(payload);
@@ -60,7 +166,12 @@ export default function VotingSimulator({ lang, text, onClose, onVoteSuccess }) 
   };
 
   const resetForm = () => {
-    setFormData({ name: '', idNumber: '' });
+    setFormData({
+      name: '',
+      idNumber: '',
+      wilayaCode: '40',
+      municipalityName: 'خنشلة'
+    });
     setListSelected(false);
     setCandidateSelected(false);
     setIsSuccess(false);
@@ -118,7 +229,7 @@ export default function VotingSimulator({ lang, text, onClose, onVoteSuccess }) 
                 {/* Input Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                    <label className="block text-sm font-bold text-slate-700 mb-2 font-tajawal">
                       {text.voting.labelName}
                     </label>
                     <input
@@ -128,11 +239,11 @@ export default function VotingSimulator({ lang, text, onClose, onVoteSuccess }) 
                       onChange={handleInputChange}
                       required
                       placeholder={text.voting.placeholderName}
-                      className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-algerian-green/20 focus:border-algerian-green transition-all text-sm font-medium"
+                      className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-algerian-green/20 focus:border-algerian-green transition-all text-sm font-medium font-tajawal"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-bold text-slate-700 mb-2">
+                    <label className="block text-sm font-bold text-slate-700 mb-2 font-tajawal">
                       {text.voting.labelId}
                     </label>
                     <input
@@ -147,6 +258,49 @@ export default function VotingSimulator({ lang, text, onClose, onVoteSuccess }) 
                       className="w-full px-4 py-3.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-algerian-green/20 focus:border-algerian-green transition-all text-sm font-medium tracking-wider"
                     />
                   </div>
+
+                  {/* Wilaya Selection */}
+                  <div className={formData.wilayaCode === '40' ? 'col-span-1' : 'col-span-1 md:col-span-2'}>
+                    <label className="block text-sm font-bold text-slate-700 mb-2 font-tajawal">
+                      {lang === 'ar' ? 'الولاية' : 'Wilaya'}
+                    </label>
+                    <select
+                      name="wilayaCode"
+                      value={formData.wilayaCode}
+                      onChange={handleInputChange}
+                      required
+                      className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-algerian-green/20 focus:border-algerian-green transition-all text-sm font-medium font-tajawal"
+                    >
+                      {ALGERIA_WILAYAS.map((w) => (
+                        <option key={w.code} value={w.code}>
+                          {w.code.toString().padStart(2, '0')} - {lang === 'ar' ? w.nameAr : w.nameEn}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Municipality Selection (Visible only for Khenchela 40) */}
+                  {formData.wilayaCode === '40' && (
+                    <div className="col-span-1">
+                      <label className="block text-sm font-bold text-slate-700 mb-2 font-tajawal">
+                        {lang === 'ar' ? 'البلدية' : 'Municipality'}
+                      </label>
+                      <select
+                        name="municipalityName"
+                        value={formData.municipalityName}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-algerian-green/20 focus:border-algerian-green transition-all text-sm font-medium font-tajawal"
+                      >
+                        <option value="">{lang === 'ar' ? '-- اختر البلدية --' : '-- Choose Municipality --'}</option>
+                        {KHENCHELA_MUNICIPALITIES.map((m) => (
+                          <option key={m.nameEn} value={m.nameAr}>
+                            {lang === 'ar' ? m.nameAr : m.nameEn}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
                 </div>
 
                 {/* BALLOT PAPER GRAPHIC */}

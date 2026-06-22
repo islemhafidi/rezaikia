@@ -22,7 +22,7 @@ const YoutubeIcon = (props) => (
 );
 
 
-export default function Footer({ lang, text, setShowVoting }) {
+export default function Footer({ lang, text, setShowVoting, settings }) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -76,7 +76,7 @@ export default function Footer({ lang, text, setShowVoting }) {
 
             {/* Calligraphic Slogan */}
             <div className="border-r-2 border-algerian-gold pr-4 py-1.5 font-arabic text-lg font-bold text-white italic tracking-wide">
-              "{text.footer.slogan}"
+              "{lang === 'ar' ? (settings?.footer_slogan_ar || text.footer.slogan) : (settings?.footer_slogan_en || text.footer.slogan)}"
             </div>
           </div>
 
@@ -171,7 +171,7 @@ export default function Footer({ lang, text, setShowVoting }) {
 
           <div className="flex items-center gap-4">
             <a
-              href="https://facebook.com"
+              href={settings?.facebook_url || 'https://facebook.com'}
               target="_blank"
               rel="noreferrer"
               className="p-2.5 rounded-xl bg-white/5 hover:bg-algerian-green hover:text-white border border-white/5 text-slate-400 hover:border-algerian-green transition-all"
@@ -180,7 +180,7 @@ export default function Footer({ lang, text, setShowVoting }) {
               <FacebookIcon className="h-4.5 w-4.5" />
             </a>
             <a
-              href="https://twitter.com"
+              href={settings?.twitter_url || 'https://twitter.com'}
               target="_blank"
               rel="noreferrer"
               className="p-2.5 rounded-xl bg-white/5 hover:bg-algerian-green hover:text-white border border-white/5 text-slate-400 hover:border-algerian-green transition-all"
@@ -189,7 +189,7 @@ export default function Footer({ lang, text, setShowVoting }) {
               <TwitterIcon className="h-4.5 w-4.5" />
             </a>
             <a
-              href="https://youtube.com"
+              href={settings?.youtube_url || 'https://youtube.com'}
               target="_blank"
               rel="noreferrer"
               className="p-2.5 rounded-xl bg-white/5 hover:bg-algerian-green hover:text-white border border-white/5 text-slate-400 hover:border-algerian-green transition-all"

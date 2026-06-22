@@ -37,10 +37,18 @@ function NavLink({ href, children, scrolled, onClick }) {
 // ─────────────────────────────────────────────────────────
 // Main Navbar Component
 // ─────────────────────────────────────────────────────────
-export default function Navbar({ lang, setLang, text, setShowVoting }) {
+export default function Navbar({ lang, setLang, text, setShowVoting, settings }) {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const isRtl = lang === 'ar';
+
+  // Dynamic values from settings with fallbacks
+  const candidateName = lang === 'ar'
+    ? (settings?.candidate_name || 'عماد رزايقية')
+    : (settings?.candidate_name_en || 'Imad Rezayguia');
+  const listNumber = settings?.list_number ?? 102;
+  const candidateNumber = settings?.candidate_number ?? 2;
+
 
   // ── Scroll detection
   useEffect(() => {
@@ -109,16 +117,16 @@ export default function Navbar({ lang, setLang, text, setShowVoting }) {
                   color: scrolled ? '#D4AF37' : '#006233',
                 }}
               >
-                عماد رزايقية
+                {candidateName}
               </span>
 
-              {/* Badges: List 102 + Candidate 2 */}
+              {/* Badges: List + Candidate */}
               <div className="flex items-center gap-1.5 mt-1">
                 <span className="text-[10px] font-bold bg-algerian-green text-white px-2 py-0.5 rounded-full border border-white/10 shadow-sm whitespace-nowrap">
-                  {isRtl ? 'القائمة 102' : 'List 102'}
+                  {isRtl ? `القائمة ${listNumber}` : `List ${listNumber}`}
                 </span>
                 <span className="text-[10px] font-bold bg-algerian-red text-white px-2 py-0.5 rounded-full border border-white/10 shadow-sm whitespace-nowrap">
-                  {isRtl ? 'المرشح 2' : 'Candidate 2'}
+                  {isRtl ? `المرشح ${candidateNumber}` : `Candidate ${candidateNumber}`}
                 </span>
               </div>
             </div>
@@ -239,13 +247,13 @@ export default function Navbar({ lang, setLang, text, setShowVoting }) {
               {/* ─ Drawer header ─ */}
               <div className="flex items-center justify-between px-6 py-5">
                 <div className="leading-none">
-                  <span className="block font-black text-[1.5rem] text-yellow-300 font-tajawal tracking-tight mb-1">عماد رزايقية</span>
+                  <span className="block font-black text-[1.5rem] text-yellow-300 font-tajawal tracking-tight mb-1">{candidateName}</span>
                   <div className="flex gap-1.5 mt-1.5">
                     <span className="text-[10px] font-bold bg-white/10 border border-algerian-gold/30 text-algerian-gold px-2 py-0.5 rounded-full">
-                      {isRtl ? 'القائمة 102' : 'List 102'}
+                      {isRtl ? `القائمة ${listNumber}` : `List ${listNumber}`}
                     </span>
                     <span className="text-[10px] font-bold bg-algerian-red/90 text-white px-2 py-0.5 rounded-full">
-                      {isRtl ? 'المرشح 2' : 'Candidate 2'}
+                      {isRtl ? `المرشح ${candidateNumber}` : `Candidate ${candidateNumber}`}
                     </span>
                   </div>
                 </div>
